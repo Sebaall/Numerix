@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "437677170381",
+    "project_id": "p-one-def60",
+    "storage_bucket": "p-one-def60.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437677170381:android:d64510270d75b2de64d384",
+        "android_client_info": {
+          "package_name": "com.example.p_one"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0DftAa5axqi9Er7hAr5_oTOUexK1bWLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
