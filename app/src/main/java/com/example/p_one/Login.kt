@@ -16,11 +16,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.Timestamp
 
 class Login : AppCompatActivity() {
 
     private lateinit var firebase: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+
     private lateinit var txtcorreo: EditText
     private lateinit var txtcontrasena: EditText
     private lateinit var btnLogin: Button
@@ -54,32 +56,40 @@ class Login : AppCompatActivity() {
         val pass = txtcontrasena.text.toString()
 
         when {
-            correo.isEmpty() -> { mostrarAlerta("Error", "Ingresa tu correo"); return }
-            !Patterns.EMAIL_ADDRESS.matcher(correo).matches() -> { mostrarAlerta("Error", "Correo no válido"); return }
-            pass.isEmpty() -> { mostrarAlerta("Error", "Ingresa tu contraseña"); return }
-            pass.length < 6 -> { mostrarAlerta("Error", "La contraseña debe tener al menos 6 caracteres"); return }
+            correo.isEmpty() -> {
+                mostrarAlerta("Error", "Ingresa tu correo"); return
+            }
+            !Patterns.EMAIL_ADDRESS.matcher(correo).matches() -> {
+                mostrarAlerta("Error", "Correo no válido"); return
+            }
+            pass.isEmpty() -> {
+                mostrarAlerta("Error", "Ingresa tu contraseña"); return
+            }
+            pass.length < 6 -> {
+                mostrarAlerta("Error", "La contraseña debe tener al menos 6 caracteres"); return
+            }
         }
+        btnLogin.isEnabled = false
 
         auth.signInWithEmailAndPassword(correo, pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    borrarContrasenaEnFirestore(correo)
                     mostrarAlerta("Inicio exitoso", "Usuario correcto. Redirigiendo…")
                     Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(this, Crud::class.java)
-                        startActivity(intent)
+                        startActivity(Intent(this, Crud::class.java))
                         finish()
-                    }, 3000)
+                    }, 2000) // 2s
                 } else {
                     val msg = task.exception?.localizedMessage ?: "Correo o contraseña incorrectos."
                     mostrarAlerta("Error", msg)
+                    btnLogin.isEnabled = true  // re-habilita en fallo
                 }
             }
+
     }
 
     private fun mostrarModalReset() {
         val correoActual = txtcorreo.text.toString().trim()
-
         AlertDialog.Builder(this)
             .setTitle("Recuperar contraseña")
             .setMessage("¿Quieres usar el correo escrito o ingresar otro?")
@@ -95,10 +105,11 @@ class Login : AppCompatActivity() {
     }
 
     private fun pedirCorreoManual() {
-        val input = EditText(this)
-        input.hint = "Correo"
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        input.setSingleLine(true)
+        val input = EditText(this).apply {
+            hint = "Correo"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setSingleLine(true)
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Recuperar contraseña")
@@ -116,88 +127,62 @@ class Login : AppCompatActivity() {
     }
 
     private fun solicitarResetConAuth(correo: String) {
+        val email = correo.trim()
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            mostrarAlerta("Correo inválido", "Ingresa un correo válido.")
+            return
+        }
+
         firebase.collection("users")
-            .whereEqualTo("correo", correo)
+            .whereEqualTo("correo", email)
             .limit(1)
             .get()
             .addOnSuccessListener { snap ->
-                if (snap.isEmpty) {
-                    mostrarAlerta("Error", "El correo no existe en la base de datos.")
+                val puedeEnviar = if (snap.isEmpty) {
+                    true
                 } else {
                     val doc = snap.documents.first()
-                    val usado = doc.getBoolean("recoveryUsed") ?: false
-
-                    if (usado) {
-                        mostrarAlerta("Aviso", "Ya usaste la recuperación de contraseña una vez.")
-                    } else {
-                        auth.sendPasswordResetEmail(correo)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    mostrarAlerta("Listo", "Te envié un correo para restablecer tu contraseña.")
-                                    firebase.collection("users")
-                                        .document(doc.id)
-                                        .update("recoveryUsed", true)
-                                } else {
-                                    val msg = task.exception?.localizedMessage
-                                        ?: "No se pudo enviar el correo de recuperación."
-                                    mostrarAlerta("Error", msg)
-                                }
-                            }
-                    }
+                    val last = doc.getTimestamp("lastRecovery")?.toDate()
+                    if (last == null) true else (System.currentTimeMillis() - last.time) > 60_000
                 }
-            }
-    }
 
-    private fun crearCuentaDesdeFirestoreYReintentar(correo: String) {
-        firebase.collection("users")
-            .whereEqualTo("correo", correo)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { snap ->
-                if (snap.isEmpty) {
-                    mostrarAlerta("Error", "El correo no existe en tu colección 'users'.")
+                if (!puedeEnviar) {
+                    mostrarAlerta("Espera un momento", "Intenta nuevamente en unos segundos.")
                 } else {
-                    val doc = snap.documents.first()
-                    val passDb = doc.getString("contrasena") ?: ""
-                    val clave = if (passDb.length >= 6) passDb else "Tmp" + System.currentTimeMillis() + "!"
-                    auth.createUserWithEmailAndPassword(correo, clave)
-                        .addOnCompleteListener { createTask ->
-                            if (createTask.isSuccessful) {
-                                try { auth.signOut() } catch (_: Exception) {}
-                                auth.sendPasswordResetEmail(correo)
-                                    .addOnCompleteListener { retry ->
-                                        if (retry.isSuccessful) {
-                                            mostrarAlerta("Listo", "Te envié un correo para restablecer tu contraseña.")
-                                        } else {
-                                            val msg = retry.exception?.localizedMessage ?: "No se pudo enviar el correo de recuperación."
-                                            mostrarAlerta("Error", msg)
-                                        }
-                                    }
+                    auth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                if (!snap.isEmpty) {
+                                    val id = snap.documents.first().id
+                                    firebase.collection("users")
+                                        .document(id)
+                                        .update("lastRecovery", Timestamp.now())
+                                }
+                                mostrarAlerta("Listo", "Te envié un correo para restablecer tu contraseña.")
                             } else {
-                                val msg = createTask.exception?.localizedMessage ?: "No se pudo crear la cuenta en Auth."
+                                val msg = task.exception?.localizedMessage
+                                    ?: "No se pudo enviar el correo de recuperación."
                                 mostrarAlerta("Error", msg)
                             }
                         }
                 }
             }
-            .addOnFailureListener { e ->
-                mostrarAlerta("Error", e.localizedMessage ?: "Error leyendo Firestore.")
+            .addOnFailureListener {
+                auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            mostrarAlerta("Listo", "Te envié un correo para restablecer tu contraseña.")
+                        } else {
+                            val msg = task.exception?.localizedMessage
+                                ?: "No se pudo enviar el correo de recuperación."
+                            mostrarAlerta("Error", msg)
+                        }
+                    }
             }
     }
 
-    private fun borrarContrasenaEnFirestore(correo: String) {
-        firebase.collection("users")
-            .whereEqualTo("correo", correo)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { snap ->
-                if (!snap.isEmpty) {
-                    val id = snap.documents.first().id
-                    val updates = hashMapOf<String, Any?>("contrasena" to null)
-                    firebase.collection("users").document(id).update(updates)
-                }
-            }
-    }
+
+
 
     private fun mostrarAlerta(titulo: String, mensaje: String) {
         AlertDialog.Builder(this)
