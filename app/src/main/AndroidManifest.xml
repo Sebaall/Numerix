@@ -15,9 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_One">
         <activity
+            android:name=".crudAdmin.crudmodificarRol"
+            android:exported="false" />
+        <activity
             android:name=".crudAdmin.crudCursos"
             android:exported="false" />
-
         <activity
             android:name=".crudAdmin.crudAdministrador"
             android:exported="false" />
