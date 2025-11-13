@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.p_one.crudAdmin.crudAdministrador
 import com.example.p_one.crudAdmin.crudAlumno
 import com.example.p_one.crudAdmin.crudCursos
+import com.example.p_one.crudAdmin.crudEditRol
 import com.example.p_one.crudAdmin.crudProfesor
 import com.example.p_one.crudAdmin.crudRoles
 
@@ -38,5 +39,8 @@ class menuAdmin : AppCompatActivity() {
     }
     fun curdCursos(view: View){
         startActivity(Intent(this, crudCursos::class.java))
+    }
+    fun curdEdit(view: View){
+        startActivity(Intent(this, crudEditRol::class.java))
     }
 }

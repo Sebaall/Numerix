@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.p_one.Models.Curso
+import com.example.p_one.Models.Users
 import com.example.p_one.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -72,7 +73,8 @@ class crudAlumno : AppCompatActivity() {
         val contrasena = txt_contrasena.text.toString().trim()
 
         if (name.isEmpty() || apellido.isEmpty() || apodo.isEmpty() || edadTxt.isEmpty()
-            || correo.isEmpty() || contrasena.isEmpty() || spCursos.selectedItem == null) {
+            || correo.isEmpty() || contrasena.isEmpty() || spCursos.selectedItem == null
+        ) {
             mostrarAlerta("Error", "Completa todos los campos y selecciona un curso.")
             return
         }
@@ -91,19 +93,22 @@ class crudAlumno : AppCompatActivity() {
         val idcurso = listaIds[idx]
 
         if (documentoId == null) {
-            firebase.collection("Alumnos")
-                .document(apodo)
+
+            // Ahora revisamos si ya hay un alumno con ese apodo en la colección users
+            firebase.collection("users")
+                .whereEqualTo("apodoAlumno", apodo)
+                .limit(1)
                 .get()
-                .addOnSuccessListener { doc ->
-                    if (doc.exists()) {
+                .addOnSuccessListener { snap ->
+                    if (!snap.isEmpty) {
                         mostrarAlerta("Error", "Ya existe un alumno con ese apodo.")
                         txt_apodo.text.clear()
                     } else {
                         // ===== Correlativo numAlumno (transacción) =====
                         firebase.runTransaction { tx ->
                             val ref = firebase.collection("contadores").document("alumnos")
-                            val snap = tx.get(ref)
-                            val actual = snap.getLong("seq") ?: 0L
+                            val snapCont = tx.get(ref)
+                            val actual = snapCont.getLong("seq") ?: 0L
                             val nuevo = actual + 1
                             tx.set(ref, mapOf("seq" to nuevo))
                             nuevo // valor que retorna la transacción
@@ -114,67 +119,53 @@ class crudAlumno : AppCompatActivity() {
                                     .addOnSuccessListener { result ->
                                         val uid = result.user?.uid ?: ""
 
-                                        val alumno = Alumno(
+
+                                        val alumno = Users(
+                                            uidAuth = uid,
+                                            rol = "Alumno",
+                                            activo = false,
+                                            nombre = name,
+                                            apellido = apellido,
+                                            correo = correo,
                                             idAlumno = uid,
-                                            nombreAlumno = name,
-                                            apellidoAlumno = apellido,
                                             apodoAlumno = apodo,
                                             edadAlumno = edad,
                                             idCurso = idcurso,
-                                            correoAlumno = correo
+                                            numAlumno = numAlumno,
+                                            roles = listOf("MENU_ALUMNOS"),
+                                            nivelAcceso = 1,
+                                            emailVerificado = false,
+                                            createdAt = System.currentTimeMillis()
                                         )
 
-                                        // Guardar alumno (doc = apodo)
-                                        firebase.collection("Alumnos")
-                                            .document(apodo)
-                                            .set(alumno)
+                                        firebase.collection("users")
+                                            .document(uid)
+                                            .set(alumno, SetOptions.merge())
                                             .addOnSuccessListener {
-                                                // Guardar numAlumno en el mismo doc
-                                                firebase.collection("Alumnos")
-                                                    .document(apodo)
-                                                    .set(mapOf("numAlumno" to numAlumno), SetOptions.merge())
-
-                                                // Perfil base + rol Alumno + flags de verificación
-                                                val dataRol = hashMapOf(
-                                                    "nombre" to name,
-                                                    "apellido" to apellido,
-                                                    "correo" to correo,
-                                                    "roles" to listOf("MENU_ALUMNOS"),
-                                                    "nivelAcceso" to 1,
-                                                    "emailVerificado" to false,
-                                                    "activo" to false,
-                                                    "createdAt" to Timestamp.now()
-                                                )
-                                                firebase.collection("users")
-                                                    .document(uid)
-                                                    .set(dataRol, SetOptions.merge())
-                                                    .addOnSuccessListener {
-                                                        // Enviar correo de verificación
-                                                        val u = result.user
-                                                        auth.setLanguageCode("es")
-                                                        u?.sendEmailVerification()
-                                                            ?.addOnCompleteListener { t ->
-                                                                if (t.isSuccessful) {
-                                                                    mostrarAlerta(
-                                                                        "Éxito",
-                                                                        "Alumno $name creado (N° $numAlumno). Se envió verificación a su correo."
-                                                                    )
-                                                                } else {
-                                                                    mostrarAlerta(
-                                                                        "Aviso",
-                                                                        "Alumno creado, pero no se pudo enviar la verificación. Intenta reenviarla más tarde."
-                                                                    )
-                                                                }
-                                                                documentoId = apodo
-                                                                limpiarForm()
-                                                            }
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        mostrarAlerta("Error", e.message ?: "No se pudo guardar el perfil del alumno.")
+                                                val u = result.user
+                                                auth.setLanguageCode("es")
+                                                u?.sendEmailVerification()
+                                                    ?.addOnCompleteListener { t ->
+                                                        if (t.isSuccessful) {
+                                                            mostrarAlerta(
+                                                                "Éxito",
+                                                                "Alumno $name creado (N° $numAlumno). Se envió verificación a su correo."
+                                                            )
+                                                        } else {
+                                                            mostrarAlerta(
+                                                                "Aviso",
+                                                                "Alumno creado, pero no se pudo enviar la verificación. Intenta reenviarla más tarde."
+                                                            )
+                                                        }
+                                                        documentoId = uid
+                                                        limpiarForm()
                                                     }
                                             }
                                             .addOnFailureListener { e ->
-                                                mostrarAlerta("Error", e.message ?: "No se pudo guardar el alumno.")
+                                                mostrarAlerta(
+                                                    "Error",
+                                                    e.message ?: "No se pudo guardar el alumno en users."
+                                                )
                                             }
                                     }
                                     .addOnFailureListener { e ->
@@ -188,12 +179,12 @@ class crudAlumno : AppCompatActivity() {
                             .addOnFailureListener {
                                 mostrarAlerta("Error", "No se pudo generar el correlativo.")
                             }
-                        // ===== FIN correlativo + auth =====
                     }
                 }
                 .addOnFailureListener { e ->
                     mostrarAlerta("Error", e.message ?: "Error al verificar duplicados.")
                 }
+
         } else {
             mostrarAlerta("Aviso", "Estás en modo edición. Usa Editar.")
         }

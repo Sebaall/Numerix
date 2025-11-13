@@ -15,6 +15,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_One">
         <activity
+            android:name=".bienvenidaScreen"
+            android:exported="false" />
+        <activity
+            android:name=".Ranking"
+            android:exported="false" />
+        <activity
+            android:name=".Results"
+            android:exported="false" />
+        <activity
+            android:name=".mathQuiz"
+            android:exported="false" />
+        <activity
+            android:name=".ScreenApodo"
+            android:exported="false" />
+        <activity
+            android:name=".crudAdmin.crudEditRol"
+            android:exported="false" />
+        <activity
             android:name=".crudAdmin.crudmodificarRol"
             android:exported="false" />
         <activity

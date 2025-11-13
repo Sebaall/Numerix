@@ -89,17 +89,21 @@ class crud_registro : AppCompatActivity() {
                                     .addOnSuccessListener { res ->
                                         val u = res.user
                                         if (u != null) {
+
+                                            // 👇 AQUÍ ES LO ÚNICO QUE CAMBIA PARA AJUSTARSE AL NUEVO Users
                                             val perfil = Users(
-                                                idUsuario = u.uid,
-                                                correo = email,
+                                                uidAuth = u.uid,
+                                                rol = "Alumno",              // por defecto lo dejas como Alumno
+                                                activo = false,
                                                 nombre = nombre,
                                                 apellido = apellido,
+                                                correo = email,
                                                 roles = null,
-                                                idPerfil = null,
-                                                activo = false,
+                                                nivelAcceso = 1,
                                                 emailVerificado = false,
                                                 createdAt = System.currentTimeMillis()
                                             )
+                                            // ☝️ el resto de campos (idAlumno, apodo, etc.) quedan null, y está bien
 
                                             db.collection("users").document(u.uid).set(perfil)
                                                 .addOnSuccessListener {

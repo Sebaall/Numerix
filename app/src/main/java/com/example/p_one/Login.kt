@@ -123,14 +123,14 @@ class Login : AppCompatActivity() {
                                     when {
                                         esAdmin -> startActivity(Intent(this, menuAdmin::class.java))
                                         esProfe -> startActivity(Intent(this, menuProfesor::class.java))
-                                        else -> startActivity(Intent(this, menuAlumno::class.java))
+                                        else -> startActivity(Intent(this, ScreenApodo::class.java))
                                     }
                                     finish()
                                 }, 1200)
                             }
                             .addOnFailureListener {
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    startActivity(Intent(this, crudAlumno::class.java))
+                                    startActivity(Intent(this, ScreenApodo::class.java))
                                     finish()
                                 }, 1200)
                             }

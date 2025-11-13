@@ -25,14 +25,9 @@
             android:layout_height="wrap_content"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="#000000">
+            app:boxStrokeWidthFocused="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_nombreAdmin"
@@ -48,14 +43,9 @@
             android:layout_height="wrap_content"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="#000000">
+            app:boxStrokeWidthFocused="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_apellidoAdmin"
@@ -71,14 +61,9 @@
             android:layout_height="wrap_content"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="#000000">
+            app:boxStrokeWidthFocused="2dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_correoAdmin"
@@ -88,7 +73,25 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botones en horizontal -->
+        <!-- Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="#000000"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_contrasenaAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,9 +108,7 @@
                 android:text="Crear admin"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#FFA726"
-                app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -118,10 +119,9 @@
                 android:text="Ver lista"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#FFA726"
-                app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />
+
         </LinearLayout>
 
     </LinearLayout>

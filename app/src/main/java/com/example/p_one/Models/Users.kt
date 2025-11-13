@@ -1,33 +1,36 @@
 package com.example.p_one.Models
 
 data class Users(
-    var uidAuth: String? = null,         // ID de Firebase Auth
-    var rol: String? = null,             // Alumno / Profesor / Administrador
-    var activo: Boolean = true,
 
-    // Datos comunes
+    // 🔐 Identificación
+    var uidAuth: String? = null,       // UID en Firebase Auth
+    var rol: String? = null,           // Alumno / Profesor / Administrador
+    var activo: Boolean = true,        // Estado del usuario
+
+    // 👤 Datos comunes
     var nombre: String? = null,
     var apellido: String? = null,
     var correo: String? = null,
 
-    // Datos de alumno
-    var idAlumno: String? = null,
+    // 👶 Datos exclusivos de Alumno
+    var idAlumno: String? = null,      // Igual al UID
     var apodoAlumno: String? = null,
     var edadAlumno: Int? = null,
-    var idCurso: String? = null,         // curso del alumno
+    var idCurso: String? = null,       // ID del curso asignado
+    var numAlumno: Long? = null,       // Número correlativo del alumno
 
-    // Datos de profesor
+    // 👨‍🏫 Datos exclusivos de Profesor
     var idProfesor: String? = null,
     var cursosAsignados: List<String>? = null,
 
-    // Datos de administrador
+    // 🛠 Datos exclusivos de Administrador
     var idAdmin: String? = null,
 
-    // Roles extra si mantienes tu colección de roles
-    var roles: List<String>? = null,
-    var nivelAcceso: Int? = 1,
+    // 🧩 Roles y permisos
+    var roles: List<String>? = null,   // Ej: ["MENU_ALUMNOS"]
+    var nivelAcceso: Int? = 1,         // Jerarquía de acceso
 
-    // Auditoría
+    // 📅 Auditoría
     var emailVerificado: Boolean = false,
     var createdAt: Long? = System.currentTimeMillis(),
     var updatedAt: Long? = null

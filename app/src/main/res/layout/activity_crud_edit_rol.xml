@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".crudAdmin.crudEditRol"
     android:background="@drawable/backgroundventanas">
 
     <LinearLayout
@@ -17,83 +19,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- NOMBRE -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="outline"
-            app:boxBackgroundColor="#FFFFFF"
-            app:boxStrokeColor="#000000"
-            app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtNombreRol"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nombre del rol"
-                android:inputType="textCapWords" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- DESCRIPCIÓN -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:boxBackgroundMode="outline"
-            app:boxBackgroundColor="#FFFFFF"
-            app:boxStrokeColor="#000000"
-            app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtDescripcionRol"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Descripción"
-                android:minLines="2"
-                android:inputType="textMultiLine" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- CREADO POR (SOLO ADMINS) -->
+        <!-- SELECCIONAR USUARIO -->
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvCreadoPor"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvSeleccionUsuario"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Creado por (admin):"
+            android:text="Selecciona usuario:"
             android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <Spinner
+            android:id="@+id/spinnerUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="6dp" />
+
+        <!-- DATOS DEL USUARIO (SOLO LECTURA) -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvDatosUsuarioTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Datos del usuario seleccionado"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginTop="16dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvNombreUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre: -"
+            android:layout_marginTop="4dp"
+            android:textColor="#000000" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvCorreoUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Correo: -"
+            android:layout_marginTop="2dp"
+            android:textColor="#000000" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvRolActualUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rol actual: -"
+            android:layout_marginTop="2dp"
+            android:textColor="#000000" />
+
+        <!-- NUEVO ROL / MENÚ -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvNuevoRolTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nuevo rol (menú):"
+            android:textStyle="bold"
+            android:textColor="#000000"
             android:layout_marginTop="16dp" />
 
         <Spinner
-            android:id="@+id/spinnerCreadoPorAdmin"
+            android:id="@+id/spinnerNuevoRol"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:spinnerMode="dropdown" />
-
-        <!-- PERMISO (MENÚ ÚNICO) -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvPermisoMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Permiso (menú):"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <Spinner
-            android:id="@+id/spinnerPermisoMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="6dp" />
 
         <!-- BOTONES -->
         <LinearLayout
@@ -104,7 +95,7 @@
             android:layout_marginTop="20dp">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnVolverRol"
+                android:id="@+id/btnVolverEditRol"
                 android:layout_width="130dp"
                 android:layout_height="53dp"
                 android:layout_marginEnd="10dp"
@@ -117,22 +108,22 @@
                 app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGuardarRol"
+                android:id="@+id/btnAplicarRol"
                 android:layout_width="130dp"
                 android:layout_height="53dp"
                 android:layout_marginStart="10dp"
-                android:text="Guardar rol"
+                android:text="Aplicar rol"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#FFA726"
                 app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp"
-                android:onClick="crearRol"/>
+                android:onClick="aplicarRolUsuarioOnClick" />
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/progressRol"
+            android:id="@+id/progressEditRol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -140,4 +131,5 @@
             android:layout_marginTop="10dp" />
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
