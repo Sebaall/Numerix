@@ -1,55 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Ranking">
+    tools:context=".Ranking"
+    android:background="@drawable/backgroundventanas">
 
     <LinearLayout
+        android:id="@+id/main_container"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
+        android:gravity="center"
+        android:background="#CCFFFFFF"
+        android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
 
-        <TextView
+        <!-- TÍTULO -->
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvTituloRanking"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ranking de resultados"
-            android:textSize="20sp"
+            android:text="Tabla de puntuaciones"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
 
+        <!-- SUBTÍTULO -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubRanking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Resultados del MathQuiz (porcentaje y respuestas correctas)"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- DIVISOR -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFE0B2"
+            android:layout_marginBottom="10dp" />
+
+        <!-- CABECERA TIPO TABLA -->
+        <LinearLayout
+            android:id="@+id/header_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:background="#1AFFA726">
+
+            <TextView
+                android:id="@+id/tvHeaderPosicion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:text="#"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#444444"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tvHeaderApodo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="Apodo"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#444444"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/tvHeaderPorcentaje"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:text="%"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#444444"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tvHeaderCorrectas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="Correctas"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#444444"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- DIVISOR CABECERA / LISTA -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFE0B2"
+            android:layout_marginBottom="6dp" />
+
+        <!-- LISTA DE RESULTADOS CON LÍNEAS -->
         <ListView
             android:id="@+id/lvRanking"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:dividerHeight="8dp" />
+            android:divider="#FFE0B2"
+            android:dividerHeight="1dp"
+            android:padding="6dp"
+            android:background="#FFFDF7" />
 
-        <Button
+        <!-- BOTÓN VOLVER A JUGAR -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVolverJugar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Volver a jugar"
-            android:layout_marginTop="16dp"
-            android:textColor="@android:color/white"
-            android:padding="12dp" />
-        <Button
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            app:backgroundTint="#FFA726"
+            app:rippleColor="#CC7A00"
+            app:cornerRadius="12dp"
+            android:layout_marginTop="16dp" />
+
+        <!-- BOTÓN CERRAR SESIÓN -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCerrarSesion"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Cerrar sesión"
-            android:layout_marginTop="12dp"
-            android:textColor="@android:color/white"
-            android:padding="12dp" />
-
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            app:backgroundTint="#E65100"
+            app:rippleColor="#8D3A00"
+            app:cornerRadius="12dp"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

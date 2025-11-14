@@ -2,6 +2,8 @@ package com.example.p_one
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -43,11 +45,10 @@ class Ranking : AppCompatActivity() {
         btnVolverJugar = findViewById(R.id.btnVolverJugar)
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
 
-        // 👇 Recuperamos el apodo que envió Results
+        // Apodo que viene desde Results
         apodoAlumno = intent.getStringExtra("apodoAlumno") ?: "Invitado"
 
         btnVolverJugar.setOnClickListener {
-            // Volver al quiz usando el MISMO apodo
             val intentQuiz = Intent(this, mathQuiz::class.java)
             intentQuiz.putExtra("apodoAlumno", apodoAlumno)
             intentQuiz.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -57,8 +58,7 @@ class Ranking : AppCompatActivity() {
 
         btnCerrarSesion.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-
-            val intentLogin = Intent(this, Login::class.java) // pon el nombre real de tu Login
+            val intentLogin = Intent(this, Login::class.java)
             intentLogin.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intentLogin)
         }
@@ -74,25 +74,48 @@ class Ranking : AppCompatActivity() {
                 if (snap.isEmpty) {
                     Toast.makeText(this, "Sin resultados aún", Toast.LENGTH_SHORT).show()
                 } else {
-                    val items = mutableListOf<String>()
-                    var posicion = 1
 
-                    for (doc in snap.documents) {
+                    // Lista de filas, cada fila es un map con los textos de tus TextView
+                    val filas: List<Map<String, String>> = snap.documents.mapIndexed { index, doc ->
                         val apodo = doc.getString("apodo") ?: "Sin apodo"
-                        val porcentaje = doc.getDouble("porcentaje") ?: 0.0
-                        val correctas = doc.getLong("correctas") ?: 0
-                        val totalPreguntas = doc.getLong("totalPreguntas") ?: 0
+                        val porcentajeDouble = doc.getDouble("porcentaje") ?: 0.0
+                        val porcentajeTexto = "${porcentajeDouble.toInt()}%"
+                        val correctasLong = doc.getLong("correctas") ?: 0L
+                        val totalLong = doc.getLong("totalPreguntas") ?: 0L
+                        val correctasTexto = "$correctasLong/$totalLong"
 
-                        val linea = "$posicion. $apodo  -  ${porcentaje.toInt()}%  ($correctas/$totalPreguntas)"
-                        items.add(linea)
-                        posicion++
+                        mapOf(
+                            "posicion" to (index + 1).toString(),
+                            "apodo" to apodo,
+                            "porcentaje" to porcentajeTexto,
+                            "correctas" to correctasTexto
+                        )
                     }
 
-                    val adapter = ArrayAdapter(
+                    // Adapter que usa item_ranking.xml
+                    val adapter = object : ArrayAdapter<Map<String, String>>(
                         this,
-                        android.R.layout.simple_list_item_1,
-                        items
-                    )
+                        R.layout.item_ranking,
+                        filas
+                    ) {
+                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                            val view = convertView ?: layoutInflater.inflate(
+                                R.layout.item_ranking,
+                                parent,
+                                false
+                            )
+
+                            val item = getItem(position) ?: emptyMap()
+
+                            view.findViewById<TextView>(R.id.tvPosicion).text = item["posicion"].orEmpty()
+                            view.findViewById<TextView>(R.id.tvApodo).text = item["apodo"].orEmpty()
+                            view.findViewById<TextView>(R.id.tvPorcentaje).text = item["porcentaje"].orEmpty()
+                            view.findViewById<TextView>(R.id.tvCorrectas).text = item["correctas"].orEmpty()
+
+                            return view
+                        }
+                    }
+
                     lvRanking.adapter = adapter
                 }
             }

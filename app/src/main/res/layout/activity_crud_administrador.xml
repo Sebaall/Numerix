@@ -1,36 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".crudAdmin.crudAdministrador"
-    android:background="@drawable/backgroundventanas">
+    android:background="@drawable/backgroundventanas"
+    tools:context=".crudAdmin.crudAdministrador">
 
     <LinearLayout
-        android:id="@+id/main_container"
-        android:layout_width="384dp"
+        android:id="@+id/main_container_admin"
+        android:layout_width="379dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp"
+        android:gravity="center_horizontal"
+        android:background="#CCFFFFFF"
+        android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- TÍTULO -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTituloCrudAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear administrador"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="6dp" />
+
+        <!-- SUBTÍTULO -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubtituloCrudAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Completa los datos para registrar un nuevo administrador en P-One."
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- DIVISOR -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFE0B2"
+            android:layout_marginBottom="16dp" />
+
         <!-- Nombre -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp">
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="#000000">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_nombreAdmin"
+                android:id="@+id/txt_nombre_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nombre"
@@ -41,14 +81,20 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp">
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="#000000">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_apellidoAdmin"
+                android:id="@+id/txt_apellido_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Apellido"
@@ -59,14 +105,20 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp">
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="#000000">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_correoAdmin"
+                android:id="@+id/txt_correo_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Correo"
@@ -77,26 +129,44 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             app:boxBackgroundColor="#FFFFFF"
             app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp">
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="password_toggle"
+            app:hintTextColor="#000000">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_contrasenaAdmin"
+                android:id="@+id/txt_contrasena_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Texto de ayuda -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvAyudaCrudAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La cuenta creada tendrá permisos de administrador en el sistema."
+            android:textSize="12sp"
+            android:textColor="#777777"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp" />
+
         <!-- Botones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -108,20 +178,24 @@
                 android:text="Crear admin"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:onClick="crearAdministrador"
                 app:backgroundTint="#FFA726"
+                app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnVerListaAdmin"
+                android:id="@+id/btnVerListaAdmins"
                 android:layout_width="130dp"
                 android:layout_height="53dp"
                 android:layout_marginStart="10dp"
-                android:text="Ver lista"
+                android:text="Ver lista admins"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#FFA726"
+                app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />
-
         </LinearLayout>
 
     </LinearLayout>

@@ -5,38 +5,89 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundventanas"
     tools:context=".ScreenApodo">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/main_container"
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:background="#CCFFFFFF"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvTituloApodo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ingresa tu apodo"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
 
-        <EditText
-            android:id="@+id/etApodo"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubtituloApodo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ej: ProMatematico"
-            android:maxLines="1"
-            android:inputType="textPersonName" />
+            android:text="Este nombre aparecerá en el ranking de MathQuiz."
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
-        <Button
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilApodo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="#FFFFFFFF"
+            app:boxStrokeColor="#000000"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etApodo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej: ProMatematico"
+                android:maxLines="1"
+                android:inputType="textCapWords"
+                android:imeOptions="actionDone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvAyudaApodo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usa entre 3 y 15 caracteres. Este será tu Apodo Definitivo."
+            android:textSize="12sp"
+            android:textColor="#777777"
+            android:layout_marginTop="6dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnComenzarQuiz"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
             android:text="Guardar y jugar"
-            android:layout_marginTop="24dp" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            app:backgroundTint="#FFA726"
+            app:rippleColor="#CC7A00"
+            app:cornerRadius="12dp" />
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

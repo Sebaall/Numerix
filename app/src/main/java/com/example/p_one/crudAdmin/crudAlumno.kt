@@ -18,22 +18,24 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.Timestamp
 
 class crudAlumno : AppCompatActivity() {
 
     private lateinit var firebase: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+
     private lateinit var txt_nombre: EditText
     private lateinit var txt_apellido: EditText
     private lateinit var txt_apodo: EditText
     private lateinit var txt_edad: EditText
     private lateinit var txt_correo: TextInputEditText
     private lateinit var txt_contrasena: TextInputEditText
+
     private val listaCursos = mutableListOf<Curso>()
     private val listaIds = mutableListOf<String>()
     private val listaRegistro = mutableListOf<String>()
     private lateinit var adaptador: ArrayAdapter<String>
+
     private var documentoId: String? = null
     private lateinit var spCursos: Spinner
 
@@ -41,6 +43,7 @@ class crudAlumno : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_crud_alumno)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -49,6 +52,7 @@ class crudAlumno : AppCompatActivity() {
 
         firebase = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+
         txt_nombre = findViewById(R.id.txt_nombre)
         txt_apellido = findViewById(R.id.txt_apellido)
         txt_apodo = findViewById(R.id.txt_apodo)
@@ -94,7 +98,7 @@ class crudAlumno : AppCompatActivity() {
 
         if (documentoId == null) {
 
-            // Ahora revisamos si ya hay un alumno con ese apodo en la colección users
+            // Revisar apodo único en colección users
             firebase.collection("users")
                 .whereEqualTo("apodoAlumno", apodo)
                 .limit(1)
@@ -111,14 +115,13 @@ class crudAlumno : AppCompatActivity() {
                             val actual = snapCont.getLong("seq") ?: 0L
                             val nuevo = actual + 1
                             tx.set(ref, mapOf("seq" to nuevo))
-                            nuevo // valor que retorna la transacción
+                            nuevo
                         }
                             .addOnSuccessListener { numAlumno ->
                                 // ===== Crear usuario en Auth (correo único) =====
                                 auth.createUserWithEmailAndPassword(correo, contrasena)
                                     .addOnSuccessListener { result ->
                                         val uid = result.user?.uid ?: ""
-
 
                                         val alumno = Users(
                                             uidAuth = uid,
@@ -164,7 +167,8 @@ class crudAlumno : AppCompatActivity() {
                                             .addOnFailureListener { e ->
                                                 mostrarAlerta(
                                                     "Error",
-                                                    e.message ?: "No se pudo guardar el alumno en users."
+                                                    e.message
+                                                        ?: "No se pudo guardar el alumno en users."
                                                 )
                                             }
                                     }
@@ -172,7 +176,10 @@ class crudAlumno : AppCompatActivity() {
                                         if (e is FirebaseAuthUserCollisionException) {
                                             mostrarAlerta("Error", "El correo ya está registrado.")
                                         } else {
-                                            mostrarAlerta("Error", e.message ?: "No se pudo crear el usuario.")
+                                            mostrarAlerta(
+                                                "Error",
+                                                e.message ?: "No se pudo crear el usuario."
+                                            )
                                         }
                                     }
                             }
@@ -205,7 +212,9 @@ class crudAlumno : AppCompatActivity() {
         txt_edad.text.clear()
         txt_correo.setText("")
         txt_contrasena.setText("")
-        spCursos.setSelection(0)
+        if (listaRegistro.isNotEmpty()) {
+            spCursos.setSelection(0)
+        }
     }
 
     private fun cargarcomboCursos() {
@@ -217,11 +226,15 @@ class crudAlumno : AppCompatActivity() {
                 listaIds.clear()
 
                 for (document in result) {
+                    val idCurso = document.getString("idCurso") ?: document.id
+                    val nombreCurso = document.getString("nombreCurso")
+                    val nivel = document.getString("nivel")
+
                     val curso = Curso(
-                        idCurso = document.getString("idCurso") ?: document.id,
-                        nombreCurso = document.getString("nombreCurso"),
-                        nivel = document.getString("nivel"),
-                        profesorId = document.getString("profesorId")
+                        idCurso = idCurso,
+                        nombreCurso = nombreCurso,
+                        nivel = nivel,
+                        profesorId = null   // el profe se asigna en otra lógica
                     )
 
                     val label = when {
@@ -234,7 +247,7 @@ class crudAlumno : AppCompatActivity() {
 
                     listaCursos.add(curso)
                     listaRegistro.add(label)
-                    listaIds.add(curso.idCurso ?: document.id)
+                    listaIds.add(curso.idCurso ?: idCurso)
                 }
 
                 adaptador.notifyDataSetChanged()

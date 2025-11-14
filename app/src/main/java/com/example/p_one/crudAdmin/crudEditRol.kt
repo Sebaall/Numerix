@@ -27,6 +27,14 @@ class crudEditRol : AppCompatActivity() {
     private val listaUserIds = mutableListOf<String>()
     private val listaUserLabels = mutableListOf<String>()
 
+    // listas de roles obtenidos desde "Roles"
+    private val listaRolesNombres = mutableListOf<String>()
+    private val listaRolesPermisos = mutableListOf<String>()
+    private val listaRolesNivelAcceso = mutableListOf<Long>()
+
+    // rol actual del usuario seleccionado (para reflejarlo en el spinner)
+    private var rolActualUsuario: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -58,14 +66,14 @@ class crudEditRol : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                if (position < listaUserIds.size && listaUserIds[position].isNotEmpty()) {
+                if (position >= 0 && position < listaUserIds.size && listaUserIds[position].isNotEmpty()) {
                     cargarDatosUsuario(listaUserIds[position])
                 } else {
                     limpiarInfoUsuario()
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) { }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
@@ -96,9 +104,7 @@ class crudEditRol : AppCompatActivity() {
 
                         listaUserIds.add(uid)
                         listaUserLabels.add(label)
-                    } catch (e: Exception) {
-                        // Si algún documento viene raro, lo ignoramos para no crashear
-                    }
+                    } catch (_: Exception) { }
                 }
 
                 if (listaUserLabels.isEmpty()) {
@@ -145,7 +151,12 @@ class crudEditRol : AppCompatActivity() {
                         tvNombreUsuario.text = "Nombre: $nombre"
                         tvCorreoUsuario.text = "Correo: $correo"
                         tvRolActualUsuario.text = "Rol actual: $rol"
-                    } catch (e: Exception) {
+
+                        // guardamos el rol actual del usuario para reflejarlo en el spinner
+                        rolActualUsuario = rol
+                        seleccionarRolActualEnSpinner()
+
+                    } catch (_: Exception) {
                         limpiarInfoUsuario()
                     }
                 } else {
@@ -162,21 +173,86 @@ class crudEditRol : AppCompatActivity() {
     }
 
     private fun cargarRolesEnSpinner() {
-        val opciones = listOf("Alumno", "Profesor", "Administrador")
+        listaRolesNombres.clear()
+        listaRolesPermisos.clear()
+        listaRolesNivelAcceso.clear()
 
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            opciones
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerNuevoRol.adapter = adapter
+        db.collection("Roles")
+            .get()
+            .addOnSuccessListener { snap ->
+                if (snap.isEmpty) {
+                    listaRolesNombres.addAll(listOf("Alumno", "Profesor", "Administrador"))
+                    listaRolesPermisos.addAll(listOf("MENU_ALUMNOS", "MENU_PROFESOR", "MENU_ADMIN"))
+                    listaRolesNivelAcceso.addAll(listOf(1L, 2L, 3L))
+                } else {
+                    for (doc in snap.documents) {
+                        val nombreRol = doc.getString("nombreRol") ?: continue
+                        val permisos = doc.get("permisos") as? List<*> ?: emptyList<Any>()
+                        val permisoClave = (permisos.firstOrNull() as? String) ?: "MENU_ALUMNOS"
+                        val nivelAcceso = doc.getLong("nivelAcceso") ?: 1L
+
+                        listaRolesNombres.add(nombreRol)
+                        listaRolesPermisos.add(permisoClave)
+                        listaRolesNivelAcceso.add(nivelAcceso)
+                    }
+
+                    if (listaRolesNombres.isEmpty()) {
+                        listaRolesNombres.addAll(listOf("Alumno", "Profesor", "Administrador"))
+                        listaRolesPermisos.addAll(listOf("MENU_ALUMNOS", "MENU_PROFESOR", "MENU_ADMIN"))
+                        listaRolesNivelAcceso.addAll(listOf(1L, 2L, 3L))
+                    }
+                }
+
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    listaRolesNombres
+                )
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerNuevoRol.adapter = adapter
+
+                // cuando ya tenemos la lista de roles, intentamos seleccionar el rol actual
+                seleccionarRolActualEnSpinner()
+            }
+            .addOnFailureListener {
+                listaRolesNombres.clear()
+                listaRolesPermisos.clear()
+                listaRolesNivelAcceso.clear()
+
+                listaRolesNombres.addAll(listOf("Alumno", "Profesor", "Administrador"))
+                listaRolesPermisos.addAll(listOf("MENU_ALUMNOS", "MENU_PROFESOR", "MENU_ADMIN"))
+                listaRolesNivelAcceso.addAll(listOf(1L, 2L, 3L))
+
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    listaRolesNombres
+                )
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerNuevoRol.adapter = adapter
+
+                seleccionarRolActualEnSpinner()
+            }
+    }
+
+    // ajusta el spinner de roles al rolActualUsuario (si existe en la lista)
+    private fun seleccionarRolActualEnSpinner() {
+        val rol = rolActualUsuario ?: return
+        if (listaRolesNombres.isEmpty()) return
+
+        val idx = listaRolesNombres.indexOfFirst { it.equals(rol, ignoreCase = true) }
+        if (idx >= 0) {
+            spinnerNuevoRol.setSelection(idx)
+        }
     }
 
     private fun limpiarInfoUsuario() {
         tvNombreUsuario.text = "Nombre: -"
         tvCorreoUsuario.text = "Correo: -"
         tvRolActualUsuario.text = "Rol actual: -"
+        rolActualUsuario = null
+        // si quieres, también puedes resetear el spinner de rol:
+        // if (listaRolesNombres.isNotEmpty()) spinnerNuevoRol.setSelection(0)
     }
 
     fun aplicarRolUsuarioOnClick(view: View) {
@@ -188,25 +264,27 @@ class crudEditRol : AppCompatActivity() {
         }
 
         val uidUser = listaUserIds[idxUser]
-        val idxRol = spinnerNuevoRol.selectedItemPosition
 
-        val (menuClave, rolTexto, nivelAcceso) = when (idxRol) {
-            0 -> Triple("MENU_ALUMNOS", "Alumno", 1L)
-            1 -> Triple("MENU_PROFESOR", "Profesor", 2L)
-            2 -> Triple("MENU_ADMIN", "Administrador", 3L)
-            else -> Triple("MENU_ALUMNOS", "Alumno", 1L)
+        val idxRol = spinnerNuevoRol.selectedItemPosition
+        if (idxRol < 0 || idxRol >= listaRolesNombres.size) {
+            mostrarAlerta("Error", "Selecciona un rol válido.")
+            return
         }
+
+        val rolTexto = listaRolesNombres[idxRol]
+        val permisoClave = listaRolesPermisos[idxRol]
+        val nivelAcceso = listaRolesNivelAcceso[idxRol]
 
         progressEditRol.visibility = View.VISIBLE
 
         val updates = hashMapOf<String, Any>(
             "rol" to rolTexto,
-            "roles" to listOf(menuClave),
+            "roles" to listOf(permisoClave),
             "nivelAcceso" to nivelAcceso,
             "updatedAt" to System.currentTimeMillis()
         )
 
-        when (menuClave) {
+        when (permisoClave) {
             "MENU_ADMIN" -> {
                 updates["idAdmin"] = uidUser
                 updates["idAlumno"] = FieldValue.delete()
@@ -230,6 +308,7 @@ class crudEditRol : AppCompatActivity() {
             .addOnSuccessListener {
                 progressEditRol.visibility = View.GONE
                 tvRolActualUsuario.text = "Rol actual: $rolTexto"
+                rolActualUsuario = rolTexto
                 mostrarAlerta("Listo", "Rol actualizado correctamente.")
             }
             .addOnFailureListener {
