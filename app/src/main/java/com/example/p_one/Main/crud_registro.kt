@@ -71,7 +71,7 @@ class crud_registro : AppCompatActivity() {
 
         when {
             email.isEmpty() -> { alerta("Ingresa tu correo"); return }
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> { alerta("Correo no válido"); return }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> { alerta("Correo no válido"); return }
             nombre.isEmpty() -> { alerta("Ingresa tu nombre"); return }
             apellido.isEmpty() -> { alerta("Ingresa tu apellido"); return }
             pass.isEmpty() -> { alerta("Ingresa tu contraseña"); return }
@@ -85,6 +85,7 @@ class crud_registro : AppCompatActivity() {
             }
         }
     }
+
 
     private fun crearCuenta(email: String, nombre: String, apellido: String, pass: String) {
         db.collection("users").whereEqualTo("nombre", nombre).limit(1).get()

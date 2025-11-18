@@ -81,26 +81,37 @@ class crudAlumno : AppCompatActivity() {
         val edadTxt = txt_edad.text.toString().trim()
         val correo = txt_correo.text.toString().trim()
         val contrasena = txt_contrasena.text.toString().trim()
+        val idx = spCursos.selectedItemPosition
 
+        // idx <= 0 => "Seleccione un curso" o nada seleccionado
         if (name.isEmpty() || apellido.isEmpty() || apodo.isEmpty() || edadTxt.isEmpty()
-            || correo.isEmpty() || contrasena.isEmpty() || spCursos.selectedItem == null
+            || correo.isEmpty() || contrasena.isEmpty() || idx <= 0
         ) {
             mostrarAlerta("Error", "Completa todos los campos y selecciona un curso.")
             return
         }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            mostrarAlerta("Error", "Ingresa un correo con formato válido.")
+            return
+        }
+
 
         val edad = edadTxt.toIntOrNull()
         if (edad == null) {
             mostrarAlerta("Error", "La edad debe ser un número.")
             return
         }
+        if (edad < 1 || edad > 18) {
+            mostrarAlerta("Error", "La edad debe estar entre 1 y 18 años.")
+            return
+        }
 
-        val idx = spCursos.selectedItemPosition
-        if (idx !in listaIds.indices) {
+        val idxReal = idx - 1 // porque 0 es "Seleccione un curso"
+        if (idxReal !in listaIds.indices) {
             mostrarAlerta("Error", "Curso no válido.")
             return
         }
-        val idcurso = listaIds[idx]
+        val idcurso = listaIds[idxReal]
 
         if (documentoId == null) {
 
@@ -114,82 +125,68 @@ class crudAlumno : AppCompatActivity() {
                         txt_apodo.text.clear()
                     } else {
 
-                        firebase.runTransaction { tx ->
-                            val ref = firebase.collection("contadores").document("alumnos")
-                            val snapCont = tx.get(ref)
-                            val actual = snapCont.getLong("seq") ?: 0L
-                            val nuevo = actual + 1
-                            tx.set(ref, mapOf("seq" to nuevo))
-                            nuevo
-                        }
-                            .addOnSuccessListener { numAlumno ->
+                        // YA NO SE USA CONTADOR, SE CREA DIRECTO
+                        auth.createUserWithEmailAndPassword(correo, contrasena)
+                            .addOnSuccessListener { result ->
+                                val uid = result.user?.uid ?: ""
 
-                                auth.createUserWithEmailAndPassword(correo, contrasena)
-                                    .addOnSuccessListener { result ->
-                                        val uid = result.user?.uid ?: ""
+                                val alumno = Users(
+                                    uidAuth = uid,
+                                    rol = "Alumno",
+                                    activo = false,
+                                    nombre = name,
+                                    apellido = apellido,
+                                    correo = correo,
+                                    idAlumno = uid,
+                                    apodoAlumno = apodo,
+                                    edadAlumno = edad,
+                                    idCurso = idcurso,
+                                    roles = listOf("MENU_ALUMNOS"),
+                                    nivelAcceso = 1,
+                                    emailVerificado = false,
+                                    createdAt = System.currentTimeMillis()
+                                )
 
-                                        val alumno = Users(
-                                            uidAuth = uid,
-                                            rol = "Alumno",
-                                            activo = false,
-                                            nombre = name,
-                                            apellido = apellido,
-                                            correo = correo,
-                                            idAlumno = uid,
-                                            apodoAlumno = apodo,
-                                            edadAlumno = edad,
-                                            idCurso = idcurso,
-                                            numAlumno = numAlumno,
-                                            roles = listOf("MENU_ALUMNOS"),
-                                            nivelAcceso = 1,
-                                            emailVerificado = false,
-                                            createdAt = System.currentTimeMillis()
-                                        )
-
-                                        firebase.collection("users")
-                                            .document(uid)
-                                            .set(alumno, SetOptions.merge())
-                                            .addOnSuccessListener {
-                                                val u = result.user
-                                                auth.setLanguageCode("es")
-                                                u?.sendEmailVerification()
-                                                    ?.addOnCompleteListener { t ->
-                                                        if (t.isSuccessful) {
-                                                            mostrarAlerta(
-                                                                "Éxito",
-                                                                "Alumno $name creado (N° $numAlumno). Se envió verificación a su correo."
-                                                            )
-                                                        } else {
-                                                            mostrarAlerta(
-                                                                "Aviso",
-                                                                "Alumno creado, pero no se pudo enviar la verificación. Intenta reenviarla más tarde."
-                                                            )
-                                                        }
-                                                        documentoId = uid
-                                                        limpiarForm()
-                                                    }
-                                            }
-                                            .addOnFailureListener { e ->
-                                                mostrarAlerta(
-                                                    "Error",
-                                                    e.message
-                                                        ?: "No se pudo guardar el alumno en users."
-                                                )
+                                firebase.collection("users")
+                                    .document(uid)
+                                    .set(alumno, SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        val u = result.user
+                                        auth.setLanguageCode("es")
+                                        u?.sendEmailVerification()
+                                            ?.addOnCompleteListener { t ->
+                                                if (t.isSuccessful) {
+                                                    mostrarAlerta(
+                                                        "Éxito",
+                                                        "Alumno $name creado. Se envió verificación a su correo."
+                                                    )
+                                                } else {
+                                                    mostrarAlerta(
+                                                        "Aviso",
+                                                        "Alumno creado, pero no se pudo enviar la verificación. Intenta reenviarla más tarde."
+                                                    )
+                                                }
+                                                documentoId = uid
+                                                limpiarForm()
                                             }
                                     }
                                     .addOnFailureListener { e ->
-                                        if (e is FirebaseAuthUserCollisionException) {
-                                            mostrarAlerta("Error", "El correo ya está registrado.")
-                                        } else {
-                                            mostrarAlerta(
-                                                "Error",
-                                                e.message ?: "No se pudo crear el usuario."
-                                            )
-                                        }
+                                        mostrarAlerta(
+                                            "Error",
+                                            e.message
+                                                ?: "No se pudo guardar el alumno en users."
+                                        )
                                     }
                             }
-                            .addOnFailureListener {
-                                mostrarAlerta("Error", "No se pudo generar el correlativo.")
+                            .addOnFailureListener { e ->
+                                if (e is FirebaseAuthUserCollisionException) {
+                                    mostrarAlerta("Error", "El correo ya está registrado.")
+                                } else {
+                                    mostrarAlerta(
+                                        "Error",
+                                        e.message ?: "No se pudo crear el usuario."
+                                    )
+                                }
                             }
                     }
                 }
@@ -218,7 +215,7 @@ class crudAlumno : AppCompatActivity() {
         txt_correo.setText("")
         txt_contrasena.setText("")
         if (listaRegistro.isNotEmpty()) {
-            spCursos.setSelection(0)
+            spCursos.setSelection(0) // vuelve a "Seleccione un curso"
         }
     }
 
@@ -229,6 +226,9 @@ class crudAlumno : AppCompatActivity() {
                 listaCursos.clear()
                 listaRegistro.clear()
                 listaIds.clear()
+
+                // Opción fija al inicio
+                listaRegistro.add("Seleccione un curso")
 
                 for (document in result) {
                     val idCurso = document.getString("idCurso") ?: document.id

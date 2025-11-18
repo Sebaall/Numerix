@@ -4,12 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.p_one.AdminMenu.ListCrudAdmin.listcrudAlumno
+import com.example.p_one.Models.Curso
 import com.example.p_one.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
@@ -30,6 +33,7 @@ class crudAlumnoEditar : AppCompatActivity() {
     private lateinit var txtEdadAlumno: TextInputEditText
     private lateinit var tvCorreoAlumno: MaterialTextView
     private lateinit var txtContrasenaAlumno: TextInputEditText
+    private lateinit var spCursos: Spinner
 
     private var documentoId: String? = null
 
@@ -38,13 +42,18 @@ class crudAlumnoEditar : AppCompatActivity() {
     private var apodoOriginal: String = ""
     private var edadOriginal: Int = 0
     private var correoOriginal: String = ""
+    private var idCursoOriginal: String? = null
+
+    private val listaCursos = mutableListOf<Curso>()
+    private val listaIds = mutableListOf<String>()
+    private val listaRegistro = mutableListOf<String>()
+    private lateinit var adaptador: ArrayAdapter<String>
 
     private val client = OkHttpClient()
     private val BASE_URL = "https://pone-backend-kz8c.onrender.com"
     private val URL_CAMBIAR_CLAVE =
         "$BASE_URL/cambiarPasswordUsuario"
 
-    // solo primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -68,6 +77,11 @@ class crudAlumnoEditar : AppCompatActivity() {
         txtEdadAlumno = findViewById(R.id.txt_edad)
         tvCorreoAlumno = findViewById(R.id.tvCorreoAlumno)
         txtContrasenaAlumno = findViewById(R.id.txt_contrasena_alumno)
+        spCursos = findViewById(R.id.spinner_curso)
+
+        adaptador = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaRegistro)
+        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spCursos.adapter = adaptador
 
         documentoId = intent.getStringExtra("docId")
 
@@ -76,6 +90,7 @@ class crudAlumnoEditar : AppCompatActivity() {
         apodoOriginal = intent.getStringExtra("apodo") ?: ""
         correoOriginal = intent.getStringExtra("correo") ?: ""
         edadOriginal = intent.getIntExtra("edad", 0)
+        idCursoOriginal = intent.getStringExtra("idCurso")
 
         txtNombreAlumno.setText(nombreOriginal)
         txtApellidoAlumno.setText(apellidoOriginal)
@@ -87,7 +102,61 @@ class crudAlumnoEditar : AppCompatActivity() {
         if (documentoId.isNullOrEmpty()) {
             mostrarAlerta("Error", "No se encontró el alumno a editar.")
             finish()
+            return
         }
+
+        cargarcomboCursos()
+    }
+
+    private fun cargarcomboCursos() {
+        firebase.collection("Cursos")
+            .get()
+            .addOnSuccessListener { result ->
+                listaCursos.clear()
+                listaRegistro.clear()
+                listaIds.clear()
+
+                for (document in result) {
+                    val idCurso = document.getString("idCurso") ?: document.id
+                    val nombreCurso = document.getString("nombreCurso")
+                    val nivel = document.getString("nivel")
+
+                    val curso = Curso(
+                        idCurso = idCurso,
+                        nombreCurso = nombreCurso,
+                        nivel = nivel,
+                        profesorId = null
+                    )
+
+                    val label = when {
+                        !curso.nombreCurso.isNullOrBlank() && !curso.nivel.isNullOrBlank() ->
+                            "${capitalizar(curso.nombreCurso!!)} – ${capitalizar(curso.nivel!!)}"
+                        !curso.nombreCurso.isNullOrBlank() -> capitalizar(curso.nombreCurso!!)
+                        !curso.nivel.isNullOrBlank() -> capitalizar(curso.nivel!!)
+                        else -> "Curso sin nombre"
+                    }
+
+                    listaCursos.add(curso)
+                    listaRegistro.add(label)
+                    listaIds.add(curso.idCurso ?: idCurso)
+                }
+
+                adaptador.notifyDataSetChanged()
+
+                if (!idCursoOriginal.isNullOrEmpty()) {
+                    val index = listaIds.indexOf(idCursoOriginal!!)
+                    if (index >= 0) {
+                        spCursos.setSelection(index)
+                    } else {
+                        if (listaIds.isNotEmpty()) spCursos.setSelection(0)
+                    }
+                } else {
+                    if (listaIds.isNotEmpty()) spCursos.setSelection(0)
+                }
+            }
+            .addOnFailureListener { e ->
+                mostrarAlerta("Error", e.message ?: "No se pudo cargar cursos.")
+            }
     }
 
     fun editarAlumno(view: View) {
@@ -99,12 +168,28 @@ class crudAlumnoEditar : AppCompatActivity() {
         val edadNueva = txtEdadAlumno.text.toString().toIntOrNull() ?: 0
         val contrasenaNueva = txtContrasenaAlumno.text?.toString()?.trim().orEmpty()
 
+        // VALIDACIÓN DE RANGO DE EDAD (1 a 18)
+        if (edadNueva != 0) {
+            if (edadNueva < 1 || edadNueva > 18) {
+                mostrarAlerta("Error", "La edad debe estar entre 1 y 18 años.")
+                return
+            }
+        }
+
         val datos = mutableMapOf<String, Any>()
 
         if (nombreNuevo != nombreOriginal) datos["nombre"] = nombreNuevo
         if (apellidoNuevo != apellidoOriginal) datos["apellido"] = apellidoNuevo
         if (apodoNuevo != apodoOriginal) datos["apodoAlumno"] = apodoNuevo
         if (edadNueva != edadOriginal && edadNueva > 0) datos["edadAlumno"] = edadNueva
+
+        val idx = spCursos.selectedItemPosition
+        if (idx >= 0 && idx < listaIds.size) {
+            val idCursoNuevo = listaIds[idx]
+            if (!idCursoNuevo.isNullOrEmpty() && idCursoNuevo != idCursoOriginal) {
+                datos["idCurso"] = idCursoNuevo
+            }
+        }
 
         if (datos.isNotEmpty() || contrasenaNueva.isNotEmpty()) {
             datos["updatedAt"] = System.currentTimeMillis()

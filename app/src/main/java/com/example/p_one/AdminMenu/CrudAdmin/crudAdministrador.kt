@@ -68,6 +68,11 @@ class crudAdministrador : AppCompatActivity() {
             mostrarAlerta("Aviso", "Estás en modo edición. Usa Editar admin.")
             return
         }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            mostrarAlerta("Error", "Ingresa un correo con formato válido.")
+            return
+        }
+
 
         auth.createUserWithEmailAndPassword(correo, contrasena)
             .addOnSuccessListener { result ->

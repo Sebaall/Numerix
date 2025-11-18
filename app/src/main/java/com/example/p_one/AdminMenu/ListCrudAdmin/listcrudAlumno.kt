@@ -1,16 +1,21 @@
 package com.example.p_one.AdminMenu.ListCrudAdmin
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.p_one.AdminMenu.EditCrudAdmin.crudAlumnoEditar
+import com.example.p_one.Models.Curso
 import com.example.p_one.Models.Users
 import com.example.p_one.R
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,13 +31,12 @@ class listcrudAlumno : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     private val listaAlumnos = mutableListOf<Users>()
-    private lateinit var adapterAlumnos: ArrayAdapter<String>
+    private val cursosMap = mutableMapOf<String, String>()
+    private lateinit var adapterAlumnos: AlumnoAdapter
 
     private val client = OkHttpClient()
     private val BASE_URL = "https://pone-backend-kz8c.onrender.com"
-
-    private val URL_ELIMINAR_USUARIO =
-        "$BASE_URL/eliminarUsuarioCompleto"
+    private val URL_ELIMINAR_USUARIO = "$BASE_URL/eliminarUsuarioCompleto"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,61 +52,71 @@ class listcrudAlumno : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         lvAlumnos = findViewById(R.id.lvAlumnos)
 
-        adapterAlumnos = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            mutableListOf()
-        )
-
-        lvAlumnos.adapter = adapterAlumnos
-
         cargarAlumnos()
         configurarEventosLista()
     }
 
     private fun cargarAlumnos() {
         listaAlumnos.clear()
-        adapterAlumnos.clear()
+        cursosMap.clear()
 
-        db.collection("users")
-            .whereEqualTo("rol", "Alumno")
+        db.collection("cursos")
             .get()
-            .addOnSuccessListener { snap ->
-                if (snap.isEmpty) {
-                    mostrarAlerta("Aviso", "No hay alumnos registrados.")
-                } else {
-                    for (doc in snap.documents) {
-                        val alumno = doc.toObject(Users::class.java) ?: continue
+            .addOnSuccessListener { snapCursos ->
+                for (doc in snapCursos.documents) {
+                    val curso = doc.toObject(Curso::class.java) ?: continue
 
-                        alumno.uidAuth = doc.id
-                        listaAlumnos.add(alumno)
+                    val idCursoCampo = (curso.idCurso ?: "").trim()
+                    val idCursoDoc = doc.id.trim()
 
-                        val texto = buildString {
-                            append(alumno.nombre ?: "")
-                            append(" ")
-                            append(alumno.apellido ?: "")
-                            if (!alumno.apodoAlumno.isNullOrBlank()) {
-                                append("\nApodo: ")
-                                append(alumno.apodoAlumno)
-                            }
-                        }
+                    val nombre = curso.nombreCurso?.trim().orEmpty()
+                    val nivel = curso.nivel?.trim().orEmpty()
 
-                        adapterAlumnos.add(texto)
+                    val textoCurso = when {
+                        nombre.isNotEmpty() && nivel.isNotEmpty() -> "$nombre $nivel"
+                        nombre.isNotEmpty() -> nombre
+                        nivel.isNotEmpty() -> nivel
+                        else -> idCursoDoc
+                    }
+
+                    if (idCursoCampo.isNotEmpty()) {
+                        cursosMap[idCursoCampo] = textoCurso
+                    }
+                    if (idCursoDoc.isNotEmpty()) {
+                        cursosMap[idCursoDoc] = textoCurso
                     }
                 }
-                adapterAlumnos.notifyDataSetChanged()
+
+                db.collection("users")
+                    .whereEqualTo("rol", "Alumno")
+                    .get()
+                    .addOnSuccessListener { snap ->
+                        if (snap.isEmpty) {
+                            mostrarAlerta("Aviso", "No hay alumnos registrados.")
+                        } else {
+                            for (doc in snap.documents) {
+                                val alumno = doc.toObject(Users::class.java) ?: continue
+                                alumno.uidAuth = doc.id
+                                listaAlumnos.add(alumno)
+                            }
+
+                            adapterAlumnos = AlumnoAdapter(this, listaAlumnos)
+                            lvAlumnos.adapter = adapterAlumnos
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        mostrarAlerta("Error", "Error al cargar alumnos: ${e.message}")
+                    }
             }
             .addOnFailureListener { e ->
-                mostrarAlerta("Error", "Error al cargar alumnos: ${e.message}")
+                mostrarAlerta("Error", "Error al cargar cursos: ${e.message}")
             }
     }
 
     private fun configurarEventosLista() {
         lvAlumnos.onItemLongClickListener =
             AdapterView.OnItemLongClickListener { _, _, position, _ ->
-
                 val alumno = listaAlumnos[position]
-
                 val opciones = arrayOf("Editar", "Eliminar", "Cancelar")
 
                 AlertDialog.Builder(this)
@@ -148,13 +162,8 @@ class listcrudAlumno : AppCompatActivity() {
         eliminarUsuarioCompletoBackend(id) { ok, mensaje ->
             runOnUiThread {
                 if (ok) {
-                    val textoItem = adapterAlumnos.getItem(position)
-                    if (textoItem != null) {
-                        adapterAlumnos.remove(textoItem)
-                    }
                     listaAlumnos.removeAt(position)
                     adapterAlumnos.notifyDataSetChanged()
-
                     mostrarAlerta("Éxito", "Alumno eliminado correctamente.")
                 } else {
                     mostrarAlerta("Error", "Error al eliminar: $mensaje")
@@ -167,9 +176,8 @@ class listcrudAlumno : AppCompatActivity() {
         idDocumento: String,
         callback: (Boolean, String) -> Unit
     ) {
-        val json = JSONObject().apply {
-            put("idUsuario", idDocumento)
-        }
+        val json = JSONObject()
+        json.put("idUsuario", idDocumento)
 
         val body = json.toString()
             .toRequestBody("application/json; charset=utf-8".toMediaType())
@@ -185,7 +193,7 @@ class listcrudAlumno : AppCompatActivity() {
                 val result = response.body?.string() ?: ""
                 callback(response.isSuccessful, result)
             } catch (e: Exception) {
-                callback(false, e.message ?: "Error desconocido")
+                callback(false, e.message ?: "")
             }
         }.start()
     }
@@ -197,5 +205,48 @@ class listcrudAlumno : AppCompatActivity() {
             .setPositiveButton("Aceptar", null)
             .create()
             .show()
+    }
+
+    inner class AlumnoAdapter(
+        private val context: Context,
+        private val alumnos: MutableList<Users>
+    ) : ArrayAdapter<Users>(context, 0, alumnos) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = convertView ?: layoutInflater.inflate(
+                R.layout.item_alumno,
+                parent,
+                false
+            )
+
+            val alumno = alumnos[position]
+
+            val tvNombre = view.findViewById<TextView>(R.id.tvFilaNombreAlumno)
+            val tvApodo = view.findViewById<TextView>(R.id.tvFilaApodoAlumno)
+            val tvCurso = view.findViewById<TextView>(R.id.tvFilaCursoAlumno)
+            val tvEdad = view.findViewById<TextView>(R.id.tvFilaEdadAlumno)
+            val tvCorreo = view.findViewById<TextView>(R.id.tvFilaCorreoAlumno)
+
+            val nombreCompleto = "${alumno.nombre ?: ""} ${alumno.apellido ?: ""}".trim()
+            tvNombre.text = nombreCompleto
+
+            tvApodo.text = alumno.apodoAlumno ?: ""
+
+            val idCursoRaw = alumno.idCurso?.trim().orEmpty()
+            val idCursoKey = idCursoRaw.substringAfterLast("/").trim()
+
+            val textoCurso = when {
+                idCursoKey.isNotEmpty() && cursosMap.containsKey(idCursoKey) -> cursosMap[idCursoKey]
+                idCursoRaw.isNotEmpty() && cursosMap.containsKey(idCursoRaw) -> cursosMap[idCursoRaw]
+                else -> idCursoRaw
+            }
+
+            tvCurso.text = textoCurso
+
+            tvEdad.text = alumno.edadAlumno?.toString() ?: "-"
+            tvCorreo.text = alumno.correo ?: ""
+
+            return view
+        }
     }
 }
