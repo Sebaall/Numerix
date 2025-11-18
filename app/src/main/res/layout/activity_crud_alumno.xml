@@ -249,10 +249,9 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnVolverAlumno"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
+                        android:layout_width="130dp"
+                        android:layout_height="53dp"
+                        android:layout_marginEnd="10dp"
                         android:onClick="curdback"
                         android:text="Volver"
                         android:textColor="#FFFFFF"
@@ -264,10 +263,9 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnCrearAlumno"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
+                        android:layout_width="130dp"
+                        android:layout_height="53dp"
+                        android:layout_marginStart="10dp"
                         android:onClick="crearAlumno"
                         android:text="Crear alumno"
                         android:textColor="#FFFFFF"
@@ -281,9 +279,10 @@
                 <!-- BOTÓN LISTA -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVerListaAlumnos"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_width="280dp"
+                    android:layout_height="53dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_gravity="center"
                     android:onClick="curdlistalum"
                     android:text="Ver lista alumnos"
                     android:textColor="#FFFFFF"
@@ -294,6 +293,7 @@
                     app:rippleColor="#37474F"
                     app:strokeColor="#FFFFFF"
                     app:strokeWidth="2dp" />
+
 
                 <!-- PROGRESS BAR -->
                 <ProgressBar

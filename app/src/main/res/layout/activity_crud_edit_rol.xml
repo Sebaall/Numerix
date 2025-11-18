@@ -166,10 +166,9 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnVolverEditRol"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
+                android:layout_width="130dp"
+                android:layout_height="53dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="sans-serif-medium"
                 android:onClick="menubacks"
                 android:text="Volver"
@@ -180,10 +179,9 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAplicarRol"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
+                android:layout_width="130dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="10dp"
                 android:text="Aplicar rol"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
@@ -193,6 +191,7 @@
                 app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />
         </LinearLayout>
+
 
         <ProgressBar
             android:id="@+id/progressEditRol"

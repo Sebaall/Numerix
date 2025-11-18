@@ -53,7 +53,7 @@
             android:background="#FFE0B2"
             android:layout_marginBottom="16dp" />
 
-        <!-- 📧 CORREO (SOLO LECTURA COMO ALUMNO) -->
+        <!-- 📧 CORREO -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvCorreoAdmin"
             android:layout_width="match_parent"
@@ -69,73 +69,73 @@
         <!-- Nombre -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="8dp"
-            app:boxBackgroundColor="#FFFFFF"
+            android:layout_height="60dp"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
+            app:boxBackgroundColor="#FFFFFF"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="#000000">
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_nombre_admin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Nombre"
-                android:inputType="textPersonName" />
+                android:textSize="15sp"
+                android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Apellido -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="8dp"
-            app:boxBackgroundColor="#FFFFFF"
+            android:layout_height="60dp"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
+            app:boxBackgroundColor="#FFFFFF"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="#000000">
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_apellido_admin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Apellido"
-                android:inputType="textPersonName" />
+                android:textSize="15sp"
+                android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Contraseña -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="8dp"
-            app:boxBackgroundColor="#FFFFFF"
+            android:layout_height="60dp"
+            android:layout_marginBottom="10dp"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
+            app:boxBackgroundColor="#FFFFFF"
             app:boxStrokeColor="#000000"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
             app:endIconMode="password_toggle"
-            app:hintTextColor="#000000">
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_contrasena_admin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Contraseña (opcional)"
+                android:textSize="15sp"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -168,7 +168,6 @@
                 android:text="Cancelar"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#B0BEC5"
                 app:rippleColor="#78909C"
                 app:cornerRadius="12dp" />
@@ -182,7 +181,6 @@
                 android:text="Editar admin"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
                 app:backgroundTint="#FFA726"
                 app:rippleColor="#CC7A00"
                 app:cornerRadius="12dp" />

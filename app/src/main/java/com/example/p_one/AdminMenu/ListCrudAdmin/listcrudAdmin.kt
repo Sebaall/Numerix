@@ -2,6 +2,7 @@ package com.example.p_one.AdminMenu.ListCrudAdmin
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.p_one.AdminMenu.CrudAdmin.crudAdministrador
+import com.example.p_one.AdminMenu.CrudAdmin.crudAlumno
 import com.example.p_one.Models.Users
 import com.example.p_one.R
 import com.example.p_one.CrudAdmin.crudAdministradorEditar
@@ -75,7 +78,9 @@ class listcrudAdmin : AppCompatActivity() {
         cargarAdministradores()
         configurarEventosLista()
     }
-
+    fun backss(view: View){
+        startActivity(Intent(this, crudAdministrador::class.java))
+    }
     private fun cargarAdministradores() {
         listaAdmins.clear()
         adapterAdmins.clear()

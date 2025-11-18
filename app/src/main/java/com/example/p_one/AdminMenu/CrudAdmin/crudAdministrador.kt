@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.p_one.AdminMenu.ListCrudAdmin.listcrudAdmin
+import com.example.p_one.Main.menuAdmin
 import com.example.p_one.Models.Users
 import com.example.p_one.R
 import com.google.android.material.textfield.TextInputEditText
@@ -52,7 +53,9 @@ class crudAdministrador : AppCompatActivity() {
         txtCorreoAdmin = findViewById(R.id.txt_correo_admin)
         txtContrasenaAdmin = findViewById(R.id.txt_contrasena_admin)
     }
-
+    fun menu(view: View){
+        startActivity(Intent(this, menuAdmin::class.java))
+    }
     fun crearAdministrador(view: View) {
         val nombre = capitalizar(txtNombreAdmin.text?.toString().orEmpty())
         val apellido = capitalizar(txtApellidoAdmin.text?.toString().orEmpty())
@@ -72,6 +75,7 @@ class crudAdministrador : AppCompatActivity() {
             mostrarAlerta("Error", "Ingresa un correo con formato válido.")
             return
         }
+
 
 
         auth.createUserWithEmailAndPassword(correo, contrasena)
