@@ -50,7 +50,6 @@ class listcrudAdmin : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         lvAdmins = findViewById(R.id.lvAdmins)
 
-        // ------------------- ADAPTADOR PERSONALIZADO -------------------
         adapterAdmins = object : ArrayAdapter<String>(
             this,
             R.layout.item_admin,
@@ -72,7 +71,6 @@ class listcrudAdmin : AppCompatActivity() {
             }
         }
         lvAdmins.adapter = adapterAdmins
-        // ----------------------------------------------------------------
 
         cargarAdministradores()
         configurarEventosLista()

@@ -30,13 +30,10 @@ class bienvenidaScreen : AppCompatActivity() {
         tvBienvenida = findViewById(R.id.tvBienvenida)
         btnJugar = findViewById(R.id.btnJugar)
 
-        // 🔹 Recibe SIEMPRE el apodo desde ScreenApodo
         val apodoAlumno = intent.getStringExtra("apodoAlumno") ?: "Alumno"
 
-        // 🔹 Mostrar SOLO el apodo
         tvBienvenida.text = "Bienvenido, $apodoAlumno"
 
-        // 🔹 Ir al juego enviando el apodo
         btnJugar.setOnClickListener {
             val intentJuego = Intent(this, mathQuiz::class.java)
             intentJuego.putExtra("apodoAlumno", apodoAlumno)

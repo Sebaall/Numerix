@@ -20,7 +20,6 @@ class ScreenApodo : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    // 👉 FUNCION QUE ME PEDISTE (solo esto se agregó)
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -41,7 +40,6 @@ class ScreenApodo : AppCompatActivity() {
 
         val uid = currentUser.uid
 
-        // 🔎 Revisamos si ya tiene apodo guardado en Firestore
         db.collection("users").document(uid)
             .get()
             .addOnSuccessListener { doc ->
@@ -49,11 +47,9 @@ class ScreenApodo : AppCompatActivity() {
                 val nombre = doc.getString("nombre")
 
                 if (!apodo.isNullOrBlank()) {
-                    // 👉 YA TIENE APODO → saltar pantalla y mostrar Bienvenida
                     irABienvenida(nombre, apodo)
                     finish()
                 } else {
-                    // 👉 NO tiene apodo → mostrar pantalla para ingresarlo
                     mostrarPantallaApodo(uid)
                 }
             }

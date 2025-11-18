@@ -31,7 +31,6 @@ class crudCursos : AppCompatActivity() {
 
     private var documentoId: String? = null
 
-    // 👉 Función agregada (solo primera letra en mayúscula)
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -77,7 +76,6 @@ class crudCursos : AppCompatActivity() {
                     val nombreRaw = doc.getString("nombre") ?: ""
                     val apellidoRaw = doc.getString("apellido") ?: ""
 
-                    // 👉 capitalizar nombres
                     val nombre = capitalizar(nombreRaw)
                     val apellido = capitalizar(apellidoRaw)
 

@@ -41,7 +41,6 @@ class crudProfesor : AppCompatActivity() {
 
     private var documentoId: String? = null
 
-    // función para dejar solo la primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }

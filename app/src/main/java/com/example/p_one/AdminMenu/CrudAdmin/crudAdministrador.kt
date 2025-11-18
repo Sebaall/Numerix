@@ -29,7 +29,6 @@ class crudAdministrador : AppCompatActivity() {
 
     private var documentoId: String? = null  // por si luego haces modo edición
 
-    // 👉 solo primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -83,7 +82,6 @@ class crudAdministrador : AppCompatActivity() {
                     correo = correo,
 
                     idAdmin = uid,
-                    // idProfesor, idAlumno quedan nulos por defecto
 
                     roles = listOf("MENU_ADMIN"),
                     nivelAcceso = 3,

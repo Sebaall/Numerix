@@ -41,7 +41,6 @@ class crudAlumno : AppCompatActivity() {
     private var documentoId: String? = null
     private lateinit var spCursos: Spinner
 
-    // 👉 función para dejar solo la primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }

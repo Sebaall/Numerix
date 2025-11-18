@@ -32,9 +32,8 @@ class crudRoles : AppCompatActivity() {
     private lateinit var progressRol: ProgressBar
 
     private var uidCreador: String = ""
-    private var nombreCreador: String = ""   // <-- nombre del admin
+    private var nombreCreador: String = ""
 
-    // misma función que antes
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -165,7 +164,7 @@ class crudRoles : AppCompatActivity() {
             nivelAcceso = nivelAcceso,
             permisos = permisos,
             fechaCreacion = fecha,
-            creadoPor = nombreCreador   // <-- aquí va el nombre del admin
+            creadoPor = nombreCreador
         )
 
         progressRol.visibility = View.VISIBLE

@@ -29,7 +29,7 @@ class crudAdministradorEditar : AppCompatActivity() {
     private lateinit var tvCorreoAdmin: MaterialTextView
     private lateinit var txtContrasenaAdmin: TextInputEditText
 
-    private var documentoId: String? = null   // id del documento en "users"
+    private var documentoId: String? = null
 
     private var nombreOriginal: String = ""
     private var apellidoOriginal: String = ""
@@ -41,7 +41,6 @@ class crudAdministradorEditar : AppCompatActivity() {
     private val URL_CAMBIAR_CLAVE =
         "$BASE_URL/cambiarPasswordUsuario"
 
-    // 👉 función para dejar solo la primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }

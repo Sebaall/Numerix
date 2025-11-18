@@ -29,7 +29,6 @@ class Ranking : AppCompatActivity() {
 
     private var apodoAlumno: String = "Invitado"
 
-    // ------- ALERTA -------
     private fun mostrarAlerta(titulo: String, mensaje: String) {
         val b = AlertDialog.Builder(this)
         b.setTitle(titulo)
@@ -37,7 +36,6 @@ class Ranking : AppCompatActivity() {
         b.setPositiveButton("Aceptar", null)
         b.create().show()
     }
-    // ------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

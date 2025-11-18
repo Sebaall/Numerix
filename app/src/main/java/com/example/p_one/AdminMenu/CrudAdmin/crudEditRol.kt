@@ -36,7 +36,6 @@ class crudEditRol : AppCompatActivity() {
     private val adminProtegidoUid = "9o51Mc4SWvZIV02pZOpSACFxJSZ2"
     private val adminProtegidoCorreo = "sebastian.leon1@virginiogomez.cl"
 
-    // ✅ solo primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }

@@ -33,7 +33,6 @@ class crud_registro : AppCompatActivity() {
     private lateinit var btnRegistrar: Button
     private lateinit var progress: ProgressBar
 
-    // solo primera letra en mayúscula
     private fun capitalizar(texto: String): String {
         return texto.trim().lowercase().replaceFirstChar { it.uppercase() }
     }
@@ -124,10 +123,15 @@ class crud_registro : AppCompatActivity() {
                                                         bloquear(false)
                                                         if (ok) {
                                                             alerta("Cuenta creada. Revisa tu correo y verifica para poder ingresar.")
-                                                            finish()
+
+                                                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                                                finish()
+                                                            }, 3000)
+
                                                         } else {
                                                             alerta("Cuenta creada, pero no pude enviar el correo: ${info ?: "intenta más tarde"}")
                                                         }
+
                                                     }
                                                 }
                                                 .addOnFailureListener { e ->
