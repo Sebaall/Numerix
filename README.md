@@ -1,76 +1,59 @@
-# 🔢 Numerix — App de Preguntas Matemáticas Rápidas (Kotlin + Firebase)
+# 🔢 Numerix - App de Preguntas Matemáticas Rápidas (Kotlin + Firebase)
 
-**Numerix** es una aplicación móvil desarrollada en **Kotlin** para Android, enfocada en entrenar el cálculo mental mediante **10 preguntas rápidas** de suma, resta, multiplicación y división.
-
-La app genera ejercicios al instante, evalúa las respuestas del usuario, registra puntajes y permite llevar un seguimiento mediante autenticación segura.
+**Numerix** es una aplicación Android desarrollada en Kotlin para entrenar el cálculo mental con 10 preguntas rápidas de operaciones básicas. Registra puntajes y permite seguimiento con autenticación segura.
 
 ---
 
-## 🚀 Características principales
+## ✨ Características
 
-- 🧠 **10 preguntas rápidas** por partida  
-- ➕➖✖️➗ **Operaciones básicas**: suma, resta, multiplicación y división  
-- 🔄 **Generación aleatoria de ejercicios**  
-- 🏁 **Tiempo y puntaje final**  
-- 🔥 **Pantallas sencillas y rápidas**, estilo juego  
-- 👤 **Inicio de sesión con Firebase Auth**  
-- ☁️ Sincronización básica con backend alojado en **Render**  
-- 📱 Incluye **archivo APK** para instalación directa
+-   10 preguntas rápidas por partida.
+-   Operaciones: suma, resta, multiplicación y división.
+-   Generación aleatoria de ejercicios.
+-   Tiempo y puntaje final.
+-   Inicio de sesión con Firebase Auth.
+-   Incluye APK para instalación directa.
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🛠️ Tecnologías
 
-### **Frontend / App**
-- Kotlin
-- Android Studio (Gradle)
-- Jetpack Components (según vistas utilizadas)
-- XML Layouts
-
-### **Backend**
-- Firebase Authentication
-- Firebase Realtime Database / Firestore (según el proyecto)
-- Render.com para despliegue del backend
-
-### **Integraciones**
-- Firebase SDK para Android
-- Servicios internos para puntajes/resultados
+-   Kotlin, Android Studio (Gradle)
+-   Jetpack Components, XML Layouts
+-   Firebase Authentication
+-   Firebase Realtime Database / Firestore
+-   Render.com (Backend)
 
 ---
 
-## 📦 Instalación del APK (recomendado)
+## 📲 Instalación (APK)
 
-1. Descarga el archivo **Numerix.apk** desde la carpeta `app/` del repositorio.  
-2. Copia el archivo a tu teléfono Android.  
-3. Activa *Instalar apps de origen desconocido* si es necesario.  
-4. Abre el APK y completa la instalación.  
-5. Inicia sesión y comienza a jugar.
-
----
-
-## 📚 Cómo compilar el proyecto (Android Studio)
-
-1. Abre Android Studio  
-2. Selecciona **Open Project**  
-3. Elige la carpeta raíz del repositorio `Numerix`  
-4. Espera que Gradle sincronice  
-5. Conecta tu dispositivo o usa un emulador  
-6. Ejecuta con el botón **Run ▶️**
+1.  Descarga `Numerix.apk` desde la carpeta `app/`.
+2.  Copia a tu teléfono Android.
+3.  Activa *Instalar apps de origen desconocido*.
+4.  Abre el APK e instala.
+5.  Inicia sesión y juega.
 
 ---
 
-## 🧪 Modo de juego
+## 💻 Compilación (Android Studio)
 
-- Se generan **10 preguntas** al azar.  
-- Al responder, se muestra si es correcta o incorrecta.  
-- Al finalizar, aparece un resumen con:
-  - Puntaje total  
-  - Tiempo  
-  - Porcentaje de aciertos  
+1.  Abre Android Studio.
+2.  Selecciona **Open Project**.
+3.  Elige la carpeta raíz del repositorio.
+4.  Espera la sincronización de Gradle.
+5.  Conecta dispositivo o usa emulador.
+6.  Ejecuta con el botón **Run ▶️**.
 
 ---
 
-## 👨‍💻 Autor
+## 🕹️ Modo de Juego
 
-Proyecto creado por **Seba**
+-   10 preguntas al azar.
+-   Respuesta correcta/incorrecta inmediata.
+-   Resumen final: Puntaje, Tiempo, Porcentaje de aciertos.
 
+---
+
+## 🧑‍🍳 Autor
+
+Seba
